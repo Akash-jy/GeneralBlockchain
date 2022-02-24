@@ -2,6 +2,7 @@
 import datetime
 import hashlib
 import json
+from urllib import response
 from flask import Flask, jsonify
 
 # Building the blockchain
@@ -91,3 +92,13 @@ class Blockchain:
 
 # Running the app
     app.run(host='0.0.0.0', port=5000)
+
+# Check if valid
+    @app.route('/is_valid', methods=['GET'])
+    def is_valid():
+        is_valid = blockchain.is_chain_valid(blockchain.chain)
+        if is_valid:
+            response = {'message': 'All good. Valid Blockchain'}
+        else:
+            response = {'messsage': 'There is some problem'}
+        return jsonify(response), 200
