@@ -1,4 +1,4 @@
-from crypt import methods
+
 import datetime
 import hashlib
 import json
@@ -13,12 +13,10 @@ class Blockchain:
         self.create_block(proof=1, previous_hash='0')
 
     def create_block(self, proof, previous_hash):
-        block = {
-            'index': len(self.chain)+1,
-            'timestamp': str(datetime.datetime.now()),
-            'proof': proof,
-            'previous_hash': previous_hash
-        }
+        block = {'index': len(self.chain) + 1,
+                 'timestamp': str(datetime.datetime.now()),
+                 'proof': proof,
+                 'previous_hash': previous_hash}
         self.chain.append(block)
         return block
 
@@ -58,15 +56,16 @@ class Blockchain:
             block_index += 1
         return True
 
-    # Creating web app
+# Creating web app
 
     app = Flask(__name__)
+    app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 
-    # Creating the blockchain
+# Creating the blockchain
 
     blockchain = Blockchain()
 
-    # Creating mining function
+# Creating mining function
 
     @app.route('/mine_block', methods=['GET'])
     def mine_block():
@@ -81,3 +80,14 @@ class Blockchain:
                     'proof': block['proof'],
                     'previous_hash': block['previous_hash']}
         return jsonify(response), 200
+
+# Getting the chain displayed at postman
+
+    @app.route('/get_chain', methods=['GET'])
+    def get_chain():
+        response = {'chain': blockchain.chain,
+                    'length': len(blockchain.chain)}
+        return jsonify(response), 200
+
+# Running the app
+    app.run(host='0.0.0.0', port=5000)
